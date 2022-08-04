@@ -1,6 +1,13 @@
 package ru.dan.springsecuritydemo.controller;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.dan.springsecuritydemo.model.Developer;
 
 import java.util.List;
@@ -24,6 +31,7 @@ public class DeveloperController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('developers:read')")
     public Developer getById(@PathVariable Long id) {
         return DEVELOPERS.stream()
                 .filter( developer -> developer.getId().equals(id))
@@ -32,12 +40,14 @@ public class DeveloperController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('developers:write')")
     public Developer create(@RequestBody Developer developer) {
         this.DEVELOPERS.add(developer);
         return developer;
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('developers:write')")
     public void deletedById(@PathVariable Long id) {
         this.DEVELOPERS.removeIf(developer -> developer.getId().equals(id));
     }
